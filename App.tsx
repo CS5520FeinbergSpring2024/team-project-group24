@@ -1,16 +1,31 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {View, Text, SafeAreaView} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import HomeScreen from './screens/HomeScreen';
+import AboutScreen from './screens/AboutScreen';
 import React from 'react';
-import {Text, View} from 'react-native';
+import HappyPrimeHeader from './components/HappyPrimeHeader';
 
-const HelloWorldApp = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Text>Hello, world!</Text>
-    </View>
-  );
+export type RootStackParamList = {
+  Home: undefined;
+  About: undefined;
 };
-export default HelloWorldApp;
+
+const headerComponent = () => <HappyPrimeHeader />;
+const Stack = createStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{headerTitle: headerComponent}}
+        />
+        <Stack.Screen name="About" component={AboutScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
