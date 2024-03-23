@@ -56,7 +56,7 @@ const AboutScreen: React.FC = () => {
         {/* This segment handles the phone number entry. Uses a library to show flags and area codes */}
         <Text style={styles.descriptionText}>Phone number (optional)</Text>
         <View style={styles.phoneContainer}>
-          <TouchableOpacity onPress={toggleModal}>
+          <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
             <View style={styles.countryCodeContainer}>
               <CountryPicker
                 {...{
