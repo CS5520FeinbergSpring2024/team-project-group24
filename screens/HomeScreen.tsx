@@ -19,8 +19,8 @@ interface Props {
 const screenHeight = Dimensions.get('window').height;
 
 const HomeScreen: React.FC<Props> = ({navigation}) => {
-  const goToAbout = () => {
-    navigation.navigate('About');
+  const goToSignUp = () => {
+    navigation.navigate('SignUp');
   };
 
   return (
@@ -39,8 +39,8 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           Id proin vitae tempus risus dis. Vitae ut phasellus facilisis neque
           est quis neque enim.
         </Text>
-        <TouchableOpacity style={styles.buttonContainer} onPress={goToAbout}>
-          <Text style={styles.buttonText}>Go to About</Text>
+        <TouchableOpacity style={styles.buttonContainer} onPress={goToSignUp}>
+          <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
     </View>
