@@ -24,6 +24,7 @@ const AboutScreen: React.FC = () => {
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.titleText}>Sign Up</Text>
+      {/* Name Entry */}
       <View style={styles.informationContainer}>
         <Text style={styles.descriptionText}>Full Name</Text>
         <View style={styles.infoContainer}>
@@ -37,6 +38,7 @@ const AboutScreen: React.FC = () => {
             style={styles.image}
           />
         </View>
+        {/* Email Entry */}
         <Text style={styles.descriptionText}>Email</Text>
         <View style={styles.infoContainer}>
           <Image
@@ -82,6 +84,19 @@ const AboutScreen: React.FC = () => {
               placeholderTextColor="#63625E"
             />
           </View>
+        </View>
+        {/* Password Entry */}
+        <Text style={styles.descriptionText}>Create password</Text>
+        <View style={styles.infoContainer}>
+          <Image
+            source={require('../assets/lock-closed-outlinelockSymbol.png')}
+            style={[styles.image, styles.iconMargin]}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Create password"
+            placeholderTextColor="#63625E"
+          />
         </View>
       </View>
     </View>
