@@ -11,7 +11,7 @@ interface Props {
   navigation: NavigationProp;
 }
 
-const SignUpScreen: React.FC<Props> = ({navigation}) => {
+const GenderScreen: React.FC<Props> = ({navigation}) => {
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
 
   return (
@@ -19,15 +19,15 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
       <Text style={styles.textStyling}>How do you identify your gender?</Text>
       <View style={styles.optionsContainer}>
         <SelectableOption
-          label="Male"
-          isSelected={selectedGender === 'Male'}
-          onPress={() => setSelectedGender('Male')}
+          label="Man"
+          isSelected={selectedGender === 'Man'}
+          onPress={() => setSelectedGender('Man')}
           allowMultiSelection={false}
         />
         <SelectableOption
-          label="Female"
-          isSelected={selectedGender === 'Female'}
-          onPress={() => setSelectedGender('Female')}
+          label="Woman"
+          isSelected={selectedGender === 'Woman'}
+          onPress={() => setSelectedGender('Woman')}
           allowMultiSelection={false}
         />
         <SelectableOption
@@ -64,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpScreen;
+export default GenderScreen;
