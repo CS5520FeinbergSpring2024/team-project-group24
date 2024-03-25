@@ -6,44 +6,61 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../App';
 
-const screenHeight = Dimensions.get('window').height;
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
-// Define a custom header component
-const NextSkipButtons = screenToChangeTo => (
-  <View style={styles.buttonContainer}>
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity
-        style={styles.continueButton}
-        onPress={screenToChangeTo}>
-        <Text style={styles.continueText}>Continue</Text>
+interface NextSkipButtonsProp {
+  screenToChangeTo: string;
+  navigation: NavigationProp;
+}
+
+const NextSkipButtons: React.FC<NextSkipButtonsProp> = ({
+  screenToChangeTo,
+  navigation,
+}) => {
+  const goToNextScreen = () => {
+    navigation.navigate(screenToChangeTo);
+  };
+  return (
+    <View style={[styles.buttonContainer, styles.screenBottom]}>
+      <TouchableOpacity style={styles.continueButton} onPress={goToNextScreen}>
+        <Text style={styles.continueText}>Next</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.skipButton} onPress={screenToChangeTo}>
+      <TouchableOpacity style={styles.skipButton} onPress={goToNextScreen}>
         <Text style={styles.skipText}>Skip</Text>
       </TouchableOpacity>
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: screenHeight * 0.2,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  screenBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   continueButton: {
     backgroundColor: '#000000',
     borderRadius: 40,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    alignItems: 'center',
   },
   skipButton: {
     backgroundColor: '#FAFAFA',
     borderRadius: 40,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    alignItems: 'center',
   },
   continueText: {
     color: '#ffffff',

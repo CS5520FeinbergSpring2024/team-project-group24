@@ -14,7 +14,7 @@ const screenHeight = Dimensions.get('window').height;
 
 type HomeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'SignUp'
+  'Welcome'
 >;
 
 interface Props {
@@ -22,8 +22,8 @@ interface Props {
 }
 
 const WelcomeScreen: React.FC<Props> = ({navigation}) => {
-  const goToWelcome = () => {
-    navigation.navigate('Welcome');
+  const goToNextScreen = () => {
+    navigation.navigate('GenderScreen');
   };
   return (
     <View style={styles.mainContainer}>
@@ -40,10 +40,12 @@ const WelcomeScreen: React.FC<Props> = ({navigation}) => {
         It will help us build better conversation suggestions
       </Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.continueButton} onPress={goToWelcome}>
+        <TouchableOpacity
+          style={styles.continueButton}
+          onPress={goToNextScreen}>
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.skipButton} onPress={goToWelcome}>
+        <TouchableOpacity style={styles.skipButton} onPress={goToNextScreen}>
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
       </View>
