@@ -6,10 +6,24 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../App';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
 
-const AboutScreen: React.FC = () => {
+const screenHeight = Dimensions.get('window').height;
+
+type HomeScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'SignUp'
+>;
+
+interface Props {
+  navigation: HomeScreenNavigationProp;
+}
+
+const SignUpScreen: React.FC<Props> = ({navigation}) => {
   // useStates handle the selection of area code flag and number
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -17,8 +31,8 @@ const AboutScreen: React.FC = () => {
   const handleCountrySelect = (country: Country) => {
     setSelectedCountry(country);
   };
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
+  const goToWelcome = () => {
+    navigation.navigate('Welcome');
   };
 
   return (
@@ -99,6 +113,9 @@ const AboutScreen: React.FC = () => {
           />
         </View>
       </View>
+      <TouchableOpacity style={styles.buttonContainer} onPress={goToWelcome}>
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -175,6 +192,18 @@ const styles = StyleSheet.create({
   iconMargin: {
     marginRight: 10, // Add margin to the right of the icon for spacing
   },
+  buttonContainer: {
+    backgroundColor: '#000000',
+    borderRadius: 40,
+    marginTop: screenHeight * 0.25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 18,
+  },
 });
 
-export default AboutScreen;
+export default SignUpScreen;

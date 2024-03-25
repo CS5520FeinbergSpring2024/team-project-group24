@@ -4,12 +4,14 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import SignUpScreen from './screens/SignUpScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
 import React from 'react';
 import HappyPrimeHeader from './components/HappyPrimeHeader';
 
 export type RootStackParamList = {
   Home: undefined;
   SignUp: undefined;
+  Welcome: undefined;
 };
 
 const headerComponent = () => <HappyPrimeHeader />;
@@ -29,6 +31,7 @@ export default function App() {
           options={{headerTitle: headerComponent}}
         />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
