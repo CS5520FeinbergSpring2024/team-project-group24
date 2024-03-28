@@ -25,6 +25,9 @@ const WelcomeScreen: React.FC<Props> = ({navigation}) => {
   const goToNextScreen = () => {
     navigation.navigate('GenderScreen');
   };
+  const goToMainScreen = () => {
+    navigation.navigate('AssistanceScreen');
+  };
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.headerText}>Welcome User!</Text>
@@ -45,7 +48,7 @@ const WelcomeScreen: React.FC<Props> = ({navigation}) => {
           onPress={goToNextScreen}>
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.skipButton} onPress={goToNextScreen}>
+        <TouchableOpacity style={styles.skipButton} onPress={goToMainScreen}>
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
       </View>

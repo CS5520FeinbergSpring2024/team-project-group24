@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
 
@@ -23,12 +17,16 @@ const NextSkipButtons: React.FC<NextSkipButtonsProp> = ({
   const goToNextScreen = () => {
     navigation.navigate(screenToChangeTo);
   };
+  const skipScreenName = 'AssistanceScreen';
+  const skipInformation = () => {
+    navigation.navigate(skipScreenName);
+  };
   return (
     <View style={[styles.buttonContainer, styles.screenBottom]}>
       <TouchableOpacity style={styles.continueButton} onPress={goToNextScreen}>
         <Text style={styles.continueText}>Next</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.skipButton} onPress={goToNextScreen}>
+      <TouchableOpacity style={styles.skipButton} onPress={skipInformation}>
         <Text style={styles.skipText}>Skip</Text>
       </TouchableOpacity>
     </View>
