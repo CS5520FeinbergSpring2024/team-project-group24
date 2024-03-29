@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
   Text,
   StyleSheet,
@@ -7,40 +7,50 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../App';
 
 const screenHeight = Dimensions.get('window').height;
 
 const screenWidth = Dimensions.get('window').width;
 
-export default class HowCanIAssistYouScreen extends Component {
-  render() {
-    return (
-      <View style={styles.mainContainer}>
-        <View style={styles.topContainer}>
-          <Text style={styles.userHeaderText}>Good Day User!</Text>
-          <Text style={styles.bodyText}>How can I assist you?</Text>
-        </View>
-        <View style={styles.overlayContainer}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.composeNewButtonCard}
-              onPress={() => console.log('Button pressed')}>
-              <Image source={require('../assets/Vectorplus.png')} />
-              <Text style={styles.composeNewText}>Compose New</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.myVocabButtonCard}
-              onPress={() => console.log('Button pressed')}>
-              <Image source={require('../assets/vocabulary.png')} />
-              <Text style={styles.myVocabText}>My Vocabulary</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.bottomContainer} />
-      </View>
-    );
-  }
+type NavigationProp = StackNavigationProp<RootStackParamList, 'ComposeNew'>;
+
+interface Props {
+  navigation: NavigationProp;
 }
+
+const HowCanIAssistYouScreen: React.FC<Props> = ({navigation}) => {
+  const goToComposeNewScreen = () => {
+    navigation.navigate('ComposeNew');
+  };
+
+  return (
+    <View style={styles.mainContainer}>
+      <View style={styles.topContainer}>
+        <Text style={styles.userHeaderText}>Good Day User!</Text>
+        <Text style={styles.bodyText}>How can I assist you?</Text>
+      </View>
+      <View style={styles.overlayContainer}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.composeNewButtonCard}
+            onPress={goToComposeNewScreen}>
+            <Image source={require('../assets/Vectorplus.png')} />
+            <Text style={styles.composeNewText}>Compose New</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.myVocabButtonCard}
+            onPress={() => console.log('Button pressed')}>
+            <Image source={require('../assets/vocabulary.png')} />
+            <Text style={styles.myVocabText}>My Vocabulary</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.bottomContainer} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -111,3 +121,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+export default HowCanIAssistYouScreen;

@@ -10,6 +10,7 @@ import React from 'react';
 import HappyPrimeHeader from './components/HappyPrimeHeader';
 import HobbiesScreen from './screens/HobbiesScreen';
 import HowCanIAssistYouScreen from './screens/HowCanIAssistYouScreen';
+import ComposeNewScreen from './screens/ComposeNewScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -18,42 +19,11 @@ export type RootStackParamList = {
   GenderScreen: undefined;
   HobbiesScreen: undefined;
   AssistanceScreen: undefined;
+  ComposeNew: undefined;
 };
 
 const headerComponent = () => <HappyPrimeHeader />;
 const Stack = createStackNavigator();
-
-const AuthStack = () => (
-  <Stack.Navigator initialRouteName="Home">
-    <Stack.Screen
-      name="Home"
-      component={HomeScreen}
-      options={{headerTitle: headerComponent}}
-    />
-    <Stack.Screen name="SignUp" component={SignUpScreen} />
-  </Stack.Navigator>
-);
-
-const InformationStack = () => (
-  <Stack.Navigator initialRouteName="Welcome">
-    <Stack.Screen
-      name="Welcome"
-      component={WelcomeScreen}
-      options={{headerTitle: headerComponent}}
-    />
-    <Stack.Screen
-      name="GenderScreen"
-      component={GenderScreen}
-      options={{headerTitle: 'Gender Identity'}}
-    />
-    <Stack.Screen
-      name="HobbiesScreen"
-      component={HobbiesScreen}
-      options={{headerTitle: 'Hobbies and Interests'}}
-    />
-    <Stack.Screen name="SignUp" component={SignUpScreen} />
-  </Stack.Navigator>
-);
 
 export default function App() {
   return (
@@ -96,6 +66,11 @@ export default function App() {
             name="AssistanceScreen"
             component={HowCanIAssistYouScreen}
             options={{headerTitle: '', headerLeft: () => null}}
+          />
+          <Stack.Screen
+            name="ComposeNew"
+            component={ComposeNewScreen}
+            options={{headerTitle: 'Compose'}}
           />
         </Stack.Group>
       </Stack.Navigator>
