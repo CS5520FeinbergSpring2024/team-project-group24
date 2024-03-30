@@ -11,8 +11,8 @@ export default class ComposeNewScreen extends Component {
   render() {
     return (
       <View style={styles.mainContainer}>
-        <DropDownSelection header={'This message is for:'} />
-        <DropDownSelection header={'How do you feel:'} />
+        <DropDownSelection />
+        {/* <DropDownSelection header={'How do you feel:'} /> */}
         <View style={styles.textBoxWrapper}>
           {/* I will ned to add multiline={true} then have the finish button exit out of keyboard*/}
           <TextInput
