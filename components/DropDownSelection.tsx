@@ -79,7 +79,7 @@ export default DropDownSelection;
 
 const styles = StyleSheet.create({
   container: {
-    height: 400,
+    flexGrow: 1,
     backgroundColor: '#FFFFFF',
   },
   cardContainer: {
@@ -91,13 +91,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   mainContainer: {
-    flexGrow: 1,
     flexDirection: 'row',
     borderColor: '#000000',
     borderWidth: 1,
     height: 50,
     padding: 12,
     backgroundColor: '#FFFFFF',
+  },
+  activeContainer: {
+    flexGrow: 1,
   },
   optionsContainer: {
     flexDirection: 'row',

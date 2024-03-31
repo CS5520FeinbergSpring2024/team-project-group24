@@ -1,6 +1,6 @@
 export default [
   {
-    color: '#CFDEDC',
+    color: '#CFDEFC',
     category: 'This message is for:',
     locationOptions: [
       'Home',
