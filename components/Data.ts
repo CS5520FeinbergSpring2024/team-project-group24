@@ -16,6 +16,6 @@ export default [
   {
     color: '#FDF4C5',
     category: 'How do you feel:',
-    emotionOptions: ['Happy', 'Sad', 'Neutral', 'Scared', 'Angry', 'Disgust'],
+    emotionOptions: ['Happy', 'Excited', 'Nervous', 'Sad', 'Neutral', 'Scared', 'Angry', 'Disgust'],
   },
 ];

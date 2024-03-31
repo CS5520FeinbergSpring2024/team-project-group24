@@ -1,27 +1,26 @@
 import React, {Component} from 'react';
 import {Text, TextInput, StyleSheet, View, Dimensions} from 'react-native';
 import BottomTaskBar from '../components/BottomTaskBar';
-import DropDownSelection from '../components/DropDownSelection';
 import DropDown from '../components/DropDown';
 
 const screenHeight = Dimensions.get('window').height;
 
-const screenWidth = Dimensions.get('window').width;
+interface ComposeNewScreenState {
+  textValue: string;
+}
 
-export default class ComposeNewScreen extends Component {
-  state = {
-    isDropDownActive: false,
-  };
-
-  toggleDropDown = () => {
-    this.setState(prevState => ({
-      isDropDownActive: !prevState.isDropDownActive,
-    }));
-  };
+export default class ComposeNewScreen extends Component<
+  {},
+  ComposeNewScreenState
+> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      textValue: '', // State to hold the value of the text input
+    };
+  }
 
   render() {
-    const {isDropDownActive} = this.state;
-
     return (
       <View style={styles.mainContainer}>
         <View style={styles.dropDownContainer}>
@@ -32,6 +31,9 @@ export default class ComposeNewScreen extends Component {
           {/* I will ned to add multiline={true} then have the finish button exit out of keyboard*/}
           <TextInput
             style={styles.textBoxContainer}
+            placeholder="Enter your message here"
+            onChangeText={text => this.setState({textValue: text})}
+            value={this.state.textValue}
             textAlignVertical="top"
             multiline={true}
           />
@@ -50,12 +52,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   dropDownContainer: {
-    flexGrow: 1,
+    flexGrow: 0,
   },
   textBoxWrapper: {
     // height: screenHeight * 0.73,
     flexGrow: 1,
-    marginTop: 20,
+    marginTop: 12,
     marginHorizontal: 12,
     marginBottom: 20,
   },

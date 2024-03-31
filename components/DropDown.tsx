@@ -37,6 +37,7 @@ export default function DropDown() {
     setSelectedReceiverOption(receiver);
   };
 
+  // Joins the selected Location and Receiver into one string
   React.useEffect(() => {
     if (selectedLocationOption && selectedReceiverOption) {
       setSelectedLocation(
@@ -75,49 +76,77 @@ export default function DropDown() {
                 />
               </View>
               <View style={styles.card}>
-                {index === currentIndex && (
-                  <View style={styles.optionsContainer}>
-                    <ScrollView showsVerticalScrollIndicator={true}>
-                      <View style={styles.subCategoriesList}>
-                        {locationOptions &&
-                          locationOptions.map(locationOption => (
-                            <TouchableOpacity
-                              key={locationOption}
-                              onPress={() =>
-                                handleLocationSelection(locationOption)
-                              }
-                              style={styles.locationOptionContainer}>
-                              <Text
+                {index === currentIndex &&
+                  category === 'This message is for:' && (
+                    <View style={styles.locationReceiverOptionsContainer}>
+                      <ScrollView showsVerticalScrollIndicator={true}>
+                        <View style={styles.subCategoriesList}>
+                          {locationOptions &&
+                            locationOptions.map(locationOption => (
+                              <TouchableOpacity
                                 key={locationOption}
-                                style={[
-                                  styles.subCategoryText,
-                                  selectedOption === locationOption &&
-                                    styles.selectedSubCategory,
-                                ]}>
-                                {locationOption}
-                              </Text>
-                            </TouchableOpacity>
-                          ))}
-                      </View>
-                    </ScrollView>
+                                onPress={() =>
+                                  handleLocationSelection(locationOption)
+                                }
+                                style={styles.locationOptionContainer}>
+                                <Text
+                                  key={locationOption}
+                                  style={[
+                                    styles.subCategoryText,
+                                    selectedOption === locationOption &&
+                                      styles.selectedSubCategory,
+                                  ]}>
+                                  {locationOption}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                        </View>
+                      </ScrollView>
+                      <ScrollView showsVerticalScrollIndicator={true}>
+                        <View style={styles.subCategoriesList}>
+                          {receiverOptions &&
+                            receiverOptions.map(receiverOption => (
+                              <TouchableOpacity
+                                key={receiverOption}
+                                onPress={() =>
+                                  handleReceiverSelection(receiverOption)
+                                }
+                                style={styles.locationOptionContainer}>
+                                <Text
+                                  key={receiverOption}
+                                  style={[
+                                    styles.subCategoryText,
+                                    selectedReceiver === receiverOption &&
+                                      styles.selectedSubCategory,
+                                  ]}>
+                                  {receiverOption}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                        </View>
+                      </ScrollView>
+                    </View>
+                  )}
+                {index === currentIndex && category === 'How do you feel:' && (
+                  <View style={styles.emotionsOptionContainer}>
                     <ScrollView showsVerticalScrollIndicator={true}>
                       <View style={styles.subCategoriesList}>
-                        {receiverOptions &&
-                          receiverOptions.map(receiverOption => (
+                        {emotionOptions &&
+                          emotionOptions.map(emotionOption => (
                             <TouchableOpacity
-                              key={receiverOption}
+                              key={emotionOption}
                               onPress={() =>
-                                handleReceiverSelection(receiverOption)
+                                handleLocationSelection(emotionOption)
                               }
                               style={styles.locationOptionContainer}>
                               <Text
-                                key={receiverOption}
+                                key={emotionOption}
                                 style={[
                                   styles.subCategoryText,
-                                  selectedReceiver === receiverOption &&
+                                  selectedOption === emotionOption &&
                                     styles.selectedSubCategory,
                                 ]}>
-                                {receiverOption}
+                                {emotionOption}
                               </Text>
                             </TouchableOpacity>
                           ))}
@@ -136,7 +165,7 @@ export default function DropDown() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#FFFFFF',
   },
   //   Main container that will expand
@@ -164,9 +193,14 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   // surrounds the two columns of locationOptions and receiverOptions
-  optionsContainer: {
+  locationReceiverOptionsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  emotionsOptionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
   },
   subCategoryText: {
     // borderWidth: 1,
@@ -174,7 +208,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     color: '#000000',
     padding: 2,
-    marginVertical: 2,
+    marginVertical: 5,
   },
   subCategoriesList: {
     marginVertical: 2,
