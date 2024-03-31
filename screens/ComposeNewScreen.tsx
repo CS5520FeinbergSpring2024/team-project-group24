@@ -54,13 +54,13 @@ const styles = StyleSheet.create({
   },
   textBoxWrapper: {
     // height: screenHeight * 0.73,
-    flex: 1,
+    flexGrow: 1,
     marginTop: 20,
     marginHorizontal: 12,
     marginBottom: 20,
   },
   textBoxContainer: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'flex-start',
     backgroundColor: '#F7F7F7',
     borderRadius: 10,

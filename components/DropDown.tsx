@@ -14,9 +14,36 @@ export default function DropDown() {
   const [currentIndex, setCurrentIndex] = React.useState<number | null>(null);
   const [selectedLocation, setSelectedLocation] = React.useState<string>('');
 
+  const [selectedOption, setSelectedOption] = React.useState<string>('');
+  const [selectedReceiver, setSelectedReceiver] = React.useState<string>('');
+  const [selectedLocationOption, setSelectedLocationOption] = React.useState<
+    string | null
+  >(null);
+  const [selectedReceiverOption, setSelectedReceiverOption] = React.useState<
+    string | null
+  >(null);
+
+  // Handles a location being selected
   const handleLocationSelection = (location: string) => {
+    setSelectedOption(location);
     setSelectedLocation(location);
+    setSelectedLocationOption(location);
   };
+
+  // Handles a receiver being selected
+  const handleReceiverSelection = (receiver: string) => {
+    // setSelectedOption(receiver);
+    setSelectedReceiver(receiver);
+    setSelectedReceiverOption(receiver);
+  };
+
+  React.useEffect(() => {
+    if (selectedLocationOption && selectedReceiverOption) {
+      setSelectedLocation(
+        `${selectedLocationOption}/${selectedReceiverOption}`,
+      );
+    }
+  }, [selectedLocationOption, selectedReceiverOption]);
 
   return (
     <View style={styles.container}>
@@ -33,66 +60,72 @@ export default function DropDown() {
               }}
               style={styles.categoryContainer}
               activeOpacity={0.9}>
-              <View style={styles.card}>
+              <View style={styles.headerContainer}>
                 <Text style={[styles.heading]}>{category}</Text>
+                <View
+                  style={[
+                    styles.selectedOptionContainer,
+                    {backgroundColor: color},
+                  ]}>
+                  <Text style={styles.selectedOption}>{selectedLocation}</Text>
+                </View>
+                <Image
+                  style={styles.image}
+                  source={require('../assets/chevron-up.png')}
+                />
+              </View>
+              <View style={styles.card}>
                 {index === currentIndex && (
                   <View style={styles.optionsContainer}>
                     <ScrollView showsVerticalScrollIndicator={true}>
-                      <View style={styles.subCategoriesListContainer}>
-                        <View style={styles.subCategoriesList}>
-                          {locationOptions &&
-                            locationOptions.map(locationOption => (
-                              <TouchableOpacity
+                      <View style={styles.subCategoriesList}>
+                        {locationOptions &&
+                          locationOptions.map(locationOption => (
+                            <TouchableOpacity
+                              key={locationOption}
+                              onPress={() =>
+                                handleLocationSelection(locationOption)
+                              }
+                              style={styles.locationOptionContainer}>
+                              <Text
                                 key={locationOption}
-                                onPress={() =>
-                                  handleLocationSelection(locationOption)
-                                }
-                                style={styles.locationOptionContainer}>
-                                <Text
-                                  key={locationOption}
-                                  style={styles.subCategoriesList}>
-                                  {locationOption}
-                                </Text>
-                              </TouchableOpacity>
-                            ))}
-                        </View>
+                                style={[
+                                  styles.subCategoryText,
+                                  selectedOption === locationOption &&
+                                    styles.selectedSubCategory,
+                                ]}>
+                                {locationOption}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
                       </View>
                     </ScrollView>
                     <ScrollView showsVerticalScrollIndicator={true}>
-                      <View style={styles.subCategoriesListContainer}>
-                        <View style={styles.subCategoriesList}>
-                          {receiverOptions &&
-                            receiverOptions.map(receiverOption => (
-                              <TouchableOpacity
+                      <View style={styles.subCategoriesList}>
+                        {receiverOptions &&
+                          receiverOptions.map(receiverOption => (
+                            <TouchableOpacity
+                              key={receiverOption}
+                              onPress={() =>
+                                handleReceiverSelection(receiverOption)
+                              }
+                              style={styles.locationOptionContainer}>
+                              <Text
                                 key={receiverOption}
-                                onPress={() =>
-                                  handleLocationSelection(receiverOption)
-                                }
-                                style={styles.locationOptionContainer}>
-                                <Text
-                                  key={receiverOption}
-                                  style={styles.subCategoriesList}>
-                                  {receiverOption}
-                                </Text>
-                              </TouchableOpacity>
-                            ))}
-                        </View>
+                                style={[
+                                  styles.subCategoryText,
+                                  selectedReceiver === receiverOption &&
+                                    styles.selectedSubCategory,
+                                ]}>
+                                {receiverOption}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
                       </View>
                     </ScrollView>
                   </View>
                 )}
               </View>
-              <View
-                style={[
-                  styles.selectedOptionContainer,
-                  {backgroundColor: color},
-                ]}>
-                <Text style={styles.selectedOption}>{selectedLocation}</Text>
-              </View>
-              <Image
-                style={styles.image}
-                source={require('../assets/chevron-up.png')}
-              />
             </TouchableOpacity>
           );
         },
@@ -104,65 +137,71 @@ export default function DropDown() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 12,
+    backgroundColor: '#FFFFFF',
   },
+  //   Main container that will expand
   categoryContainer: {
     flexGrow: 0,
-    flexDirection: 'row',
     justifyContent: 'flex-start',
-    borderColor: '#000000',
     paddingVertical: 5,
+    borderColor: '#F7F7F7',
     borderWidth: 1,
   },
-  card: {
+  //   Need a header container to hold prompt and selected option
+  headerContainer: {
+    flexDirection: 'row',
     flexGrow: 0,
+    paddingVertical: 3,
   },
   heading: {
     color: '#000000',
-    paddingRight: 20,
+    paddingRight: 12,
+    paddingLeft: 12,
     fontSize: 16,
   },
-  body: {
-    color: '#000000',
-    fontSize: 20,
-    textAlign: 'center',
+  // The card is what handles the expansion
+  card: {
+    flexGrow: 0,
   },
-  subCategoriesListContainer: {
-    borderColor: '#345676',
-    borderWidth: 1,
-    marginTop: 8,
-    paddingHorizontal: 15, // Add padding here instead
-  },
+  // surrounds the two columns of locationOptions and receiverOptions
   optionsContainer: {
-    borderColor: '#653423',
-    borderWidth: 1,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 8,
-    paddingRight: 15,
+    justifyContent: 'center',
+  },
+  subCategoryText: {
+    // borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    color: '#000000',
+    padding: 2,
+    marginVertical: 2,
   },
   subCategoriesList: {
-    marginTop: 5,
+    marginVertical: 2,
     color: '#000000',
+    padding: 2,
     justifyContent: 'space-around',
+  },
+  selectedSubCategory: {
+    borderColor: '#0A24A5',
+    color: '#0A24A5',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 20,
   },
   image: {
     right: 0,
   },
+  //   Contains the individual options
   locationOptionContainer: {
-    borderColor: '#FDF4C5',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    backgroundColor: '#E0E0E0',
-    marginBottom: 5,
+    marginVertical: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  //   Once an option is selected it is placed in the header
   selectedOptionContainer: {
-    borderColor: '#000000',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
+    borderRadius: 20,
+    paddingHorizontal: 20,
     height: 25,
     justifyContent: 'center',
     alignItems: 'center',
