@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, TextInput, StyleSheet, View, Dimensions} from 'react-native';
+import {TextInput, StyleSheet, View, Dimensions} from 'react-native';
 import BottomTaskBar from '../components/BottomTaskBar';
 import DropDown from '../components/DropDown';
 

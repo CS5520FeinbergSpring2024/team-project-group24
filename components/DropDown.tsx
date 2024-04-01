@@ -13,18 +13,18 @@ import Data from './Data';
 const screenHeight = Dimensions.get('window').height;
 
 export default function DropDown() {
-  const [currentIndex, setCurrentIndex] = React.useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  const [selectedLocation, setSelectedLocation] = React.useState<string>('');
-  const [selectedOption, setSelectedOption] = React.useState<string>('');
-  const [selectedReceiver, setSelectedReceiver] = React.useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [selectedReceiver, setSelectedReceiver] = useState<string>('');
 
-  const [selectedEmotion, setSelectedEmotion] = React.useState<string>('');
+  const [selectedEmotion, setSelectedEmotion] = useState<string>('');
 
-  const [selectedLocationOption, setSelectedLocationOption] = React.useState<
+  const [selectedLocationOption, setSelectedLocationOption] = useState<
     string | null
   >(null);
-  const [selectedReceiverOption, setSelectedReceiverOption] = React.useState<
+  const [selectedReceiverOption, setSelectedReceiverOption] = useState<
     string | null
   >(null);
 
