@@ -7,6 +7,7 @@ const screenHeight = Dimensions.get('window').height;
 
 interface ComposeNewScreenState {
   textValue: string;
+  isDropDownActive: boolean;
 }
 
 export default class ComposeNewScreen extends Component<
@@ -17,13 +18,24 @@ export default class ComposeNewScreen extends Component<
     super(props);
     this.state = {
       textValue: '', // State to hold the value of the text input
+      isDropDownActive: true,
     };
   }
 
+  handleTextInputFocus = () => {
+    // Shrink the dropdown when TextInput is focused
+    this.setState({isDropDownActive: false});
+  };
+
   render() {
+    const {isDropDownActive} = this.state;
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.dropDownContainer}>
+        <View
+          style={[
+            styles.dropDownContainer,
+            isDropDownActive ? null : {flexGrow: 0},
+          ]}>
           <DropDown />
         </View>
         {/* <DropDownSelection header={'How do you feel:'} /> */}
@@ -36,6 +48,7 @@ export default class ComposeNewScreen extends Component<
             value={this.state.textValue}
             textAlignVertical="top"
             multiline={true}
+            onFocus={this.handleTextInputFocus}
           />
         </View>
         <View style={styles.bottomPadding} />
@@ -53,6 +66,7 @@ const styles = StyleSheet.create({
   },
   dropDownContainer: {
     flexGrow: 0,
+    maxHeight: screenHeight / 3,
   },
   textBoxWrapper: {
     // height: screenHeight * 0.73,

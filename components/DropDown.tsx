@@ -10,12 +10,17 @@ import {
 import React, {useState} from 'react';
 import Data from './Data';
 
+const screenHeight = Dimensions.get('window').height;
+
 export default function DropDown() {
   const [currentIndex, setCurrentIndex] = React.useState<number | null>(null);
-  const [selectedLocation, setSelectedLocation] = React.useState<string>('');
 
+  const [selectedLocation, setSelectedLocation] = React.useState<string>('');
   const [selectedOption, setSelectedOption] = React.useState<string>('');
   const [selectedReceiver, setSelectedReceiver] = React.useState<string>('');
+
+  const [selectedEmotion, setSelectedEmotion] = React.useState<string>('');
+
   const [selectedLocationOption, setSelectedLocationOption] = React.useState<
     string | null
   >(null);
@@ -35,6 +40,10 @@ export default function DropDown() {
     // setSelectedOption(receiver);
     setSelectedReceiver(receiver);
     setSelectedReceiverOption(receiver);
+  };
+
+  const handleEmotionSelection = (emotion: string) => {
+    setSelectedEmotion(emotion);
   };
 
   // Joins the selected Location and Receiver into one string
@@ -68,7 +77,11 @@ export default function DropDown() {
                     styles.selectedOptionContainer,
                     {backgroundColor: color},
                   ]}>
-                  <Text style={styles.selectedOption}>{selectedLocation}</Text>
+                  <Text style={styles.selectedOption}>
+                    {category === 'This message is for:'
+                      ? selectedLocation
+                      : selectedEmotion}
+                  </Text>
                 </View>
                 <Image
                   style={styles.image}
@@ -79,7 +92,9 @@ export default function DropDown() {
                 {index === currentIndex &&
                   category === 'This message is for:' && (
                     <View style={styles.locationReceiverOptionsContainer}>
-                      <ScrollView showsVerticalScrollIndicator={true}>
+                      <ScrollView
+                        showsVerticalScrollIndicator={true}
+                        contentContainerStyle={styles.scrollViewContainer}>
                         <View style={styles.subCategoriesList}>
                           {locationOptions &&
                             locationOptions.map(locationOption => (
@@ -102,7 +117,9 @@ export default function DropDown() {
                             ))}
                         </View>
                       </ScrollView>
-                      <ScrollView showsVerticalScrollIndicator={true}>
+                      <ScrollView
+                        showsVerticalScrollIndicator={true}
+                        contentContainerStyle={styles.scrollViewContainer}>
                         <View style={styles.subCategoriesList}>
                           {receiverOptions &&
                             receiverOptions.map(receiverOption => (
@@ -128,31 +145,58 @@ export default function DropDown() {
                     </View>
                   )}
                 {index === currentIndex && category === 'How do you feel:' && (
-                  <View style={styles.emotionsOptionContainer}>
-                    <ScrollView showsVerticalScrollIndicator={true}>
-                      <View style={styles.subCategoriesList}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={true}
+                    contentContainerStyle={styles.scrollViewContainer}>
+                    <View style={styles.emotionsMainOptionContainer}>
+                      <View style={styles.leftColumn}>
                         {emotionOptions &&
-                          emotionOptions.map(emotionOption => (
-                            <TouchableOpacity
-                              key={emotionOption}
-                              onPress={() =>
-                                handleLocationSelection(emotionOption)
-                              }
-                              style={styles.locationOptionContainer}>
-                              <Text
+                          emotionOptions
+                            .slice(0, emotionOptions.length / 2)
+                            .map(emotionOption => (
+                              <TouchableOpacity
                                 key={emotionOption}
-                                style={[
-                                  styles.subCategoryText,
-                                  selectedOption === emotionOption &&
-                                    styles.selectedSubCategory,
-                                ]}>
-                                {emotionOption}
-                              </Text>
-                            </TouchableOpacity>
-                          ))}
+                                onPress={() =>
+                                  handleEmotionSelection(emotionOption)
+                                }
+                                style={styles.emotionOptionContainer}>
+                                <Text
+                                  key={emotionOption}
+                                  style={[
+                                    styles.subCategoryText,
+                                    selectedEmotion === emotionOption &&
+                                      styles.selectedSubCategory,
+                                  ]}>
+                                  {emotionOption}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
                       </View>
-                    </ScrollView>
-                  </View>
+                      <View style={styles.rightColumn}>
+                        {emotionOptions &&
+                          emotionOptions
+                            .slice(emotionOptions.length / 2)
+                            .map(emotionOption => (
+                              <TouchableOpacity
+                                key={emotionOption}
+                                onPress={() =>
+                                  handleEmotionSelection(emotionOption)
+                                }
+                                style={styles.emotionOptionContainer}>
+                                <Text
+                                  key={emotionOption}
+                                  style={[
+                                    styles.subCategoryText,
+                                    selectedEmotion === emotionOption &&
+                                      styles.selectedSubCategory,
+                                  ]}>
+                                  {emotionOption}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                      </View>
+                    </View>
+                  </ScrollView>
                 )}
               </View>
             </TouchableOpacity>
@@ -175,6 +219,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderColor: '#F7F7F7',
     borderWidth: 1,
+    overflow: 'hidden',
+    maxHeight: screenHeight / 4,
+  },
+  scrollViewContainer: {
+    paddingBottom: 25,
   },
   //   Need a header container to hold prompt and selected option
   headerContainer: {
@@ -197,18 +246,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  emotionsOptionContainer: {
+  emotionsMainOptionContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    flexWrap: 'wrap',
   },
   subCategoryText: {
-    // borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 20,
     color: '#000000',
     padding: 2,
-    marginVertical: 5,
+    marginVertical: 0,
   },
   subCategoriesList: {
     marginVertical: 2,
@@ -229,6 +276,21 @@ const styles = StyleSheet.create({
   //   Contains the individual options
   locationOptionContainer: {
     marginVertical: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emotionOptionContainer: {
+    marginVertical: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  leftColumn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rightColumn: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
