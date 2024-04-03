@@ -13,14 +13,14 @@ export type conn = {
 export const connection = writable<conn>({
     backendAvailable: false,
     webrtc: false,
-    model: "tiny",
-    filename: "",
-    language: "en",
-    token:""
+    model: 'tiny',
+    filename: '',
+    language: 'en',
+    token:'',
 });
 
 export const updateState = (obj: Partial<conn>) => {
-    console.log("called updateState");
+    console.log('called updateState');
     connection.update((value) => ({ ...value, ...obj }));
 }
 

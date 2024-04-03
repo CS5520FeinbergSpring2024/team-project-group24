@@ -9,7 +9,6 @@ import {
 import React, {useState} from 'react';
 import {PulseIndicator, BallIndicator} from 'react-native-indicators';
 import {PermissionsAndroid} from 'react-native';
-
 const screenHeight = Dimensions.get('window').height;
 
 // const screenWidth = Dimensions.get('window').width;
@@ -39,6 +38,7 @@ const BottomTaskBar = ({
         setRecordActive(true);
         console.log('Microphone active', recordActive);
         // Perform recording here
+        handleStart();
       } else {
         console.log('Microphone permission denied');
       }
@@ -49,6 +49,7 @@ const BottomTaskBar = ({
 
   const handleFinishPress = async () => {
     setRecordActive(false);
+    handleStop();
   };
 
   return (
