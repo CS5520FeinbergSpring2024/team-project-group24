@@ -51,33 +51,33 @@ const BottomTaskBar = ({
         //   audio: true,
         // });
         // setStream(audioStream);
-        const [rtcPeerConnection, rtcDataChannel] =
-          await createOutboundConnection(token);
-        setWebrtc(rtcPeerConnection);
-        setDataChannel(rtcDataChannel);
-        rtcDataChannel.onopen = () => {
-          rtcDataChannel.onmessage = event => {
-            console.log('We received a message: ', event.data);
-            const messageObject = JSON.parse(event.data);
-            const threshold = 0.5;
-            setAns(currentMessages => {
-              if (currentMessages.length > 0) {
-                const lastCurrentMessage =
-                  currentMessages[currentMessages.length - 1];
-                if (
-                  Math.abs(messageObject.start - lastCurrentMessage.start) <
-                  threshold
-                ) {
-                  return [...currentMessages.slice(0, -1), messageObject];
-                } else if (messageObject.start < lastCurrentMessage.start) {
-                  return currentMessages;
-                }
-              }
-              return [...currentMessages, messageObject];
-            });
-          };
-        };
-        updateState({webrtc: true});
+        // const [rtcPeerConnection, rtcDataChannel] =
+        //   await createOutboundConnection(token);
+        // setWebrtc(rtcPeerConnection);
+        // setDataChannel(rtcDataChannel);
+        // rtcDataChannel.onopen = () => {
+        //   rtcDataChannel.onmessage = event => {
+        //     console.log('We received a message: ', event.data);
+        //     const messageObject = JSON.parse(event.data);
+        //     const threshold = 0.5;
+        //     setAns(currentMessages => {
+        //       if (currentMessages.length > 0) {
+        //         const lastCurrentMessage =
+        //           currentMessages[currentMessages.length - 1];
+        //         if (
+        //           Math.abs(messageObject.start - lastCurrentMessage.start) <
+        //           threshold
+        //         ) {
+        //           return [...currentMessages.slice(0, -1), messageObject];
+        //         } else if (messageObject.start < lastCurrentMessage.start) {
+        //           return currentMessages;
+        //         }
+        //       }
+        //       return [...currentMessages, messageObject];
+        //     });
+        //   };
+        // };
+        // updateState({webrtc: true});
         updateElapsedTime();
         setRecordingStartTime(new Date());
         console.log('elapsed time: ', elapsedTime);
