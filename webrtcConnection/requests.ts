@@ -1,10 +1,10 @@
-const URL = `https://api.happyprime.io/transcription`;
+const URL = 'https://api.happyprime.io/transcription';
 
 export async function initModel(obj: { user_id: string, model: string, language: string }): Promise<{ token: string }> {
-    let response = await fetch(URL + "/init", {
-        method: "POST",
+    let response = await fetch(URL + '/init', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(obj),
     })
@@ -14,24 +14,24 @@ export async function initModel(obj: { user_id: string, model: string, language:
 }
 
 export async function sendOffer(token: string, sdp: string, type: string): Promise<RTCSessionDescription> {
-    let response = await fetch(URL + "/offer", {
-        method: "POST",
+    let response = await fetch(URL + '/offer', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token, sdp, type }),
-    })
-    let data = await response.json() as RTCSessionDescription
-    return data
+    });
+    let data = await response.json() as RTCSessionDescription;
+    return data;
 }
 
 export async function ping(): Promise<boolean> {
-    let response = await fetch(URL + "/ping")
-    let data = await response.json()
-    if (data.ping === "pong") {
-        return true
+    let response = await fetch(URL + '/ping')
+    let data = await response.json();
+    if (data.ping === 'pong') {
+        return true;
     }
-    return false
+    return false;
 }
 
 type Segment = {
@@ -48,14 +48,14 @@ type Segment = {
 }
 
 export async function infer(token: string): Promise<Array<Segment>> {
-    let response = await fetch(URL + "/infer", {
-        method: "POST",
+    let response = await fetch(URL + '/infer', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token }),
-    })
+    });
 
-    let data = await response.json() as Array<Segment>
-    return data
+    let data = await response.json() as Array<Segment>;
+    return data;
 }
