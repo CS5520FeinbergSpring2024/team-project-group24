@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { ping } from './requests';
 
 export type conn = {

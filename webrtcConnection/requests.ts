@@ -7,9 +7,9 @@ export async function initModel(obj: { user_id: string, model: string, language:
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(obj),
-    })
+    });
 
-    let data = await response.json() as { token: string }
+    let data = await response.json() as { token: string };
     return data;
 }
 
@@ -26,7 +26,7 @@ export async function sendOffer(token: string, sdp: string, type: string): Promi
 }
 
 export async function ping(): Promise<boolean> {
-    let response = await fetch(URL + '/ping')
+    let response = await fetch(URL + '/ping');
     let data = await response.json();
     if (data.ping === 'pong') {
         return true;
