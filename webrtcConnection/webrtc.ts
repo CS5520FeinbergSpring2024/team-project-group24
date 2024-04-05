@@ -1,11 +1,11 @@
 
 import { sendOffer } from './requests';
 import {
-    RTCPeerConnection,
+    RTCPeerConnection, mediaDevices,
 } from 'react-native-webrtc';
 
-export async function createOutboundConnection(token: string, stream?: MediaStream): Promise<[RTCPeerConnection, RTCDataChannel]> {
-    return new Promise((resolve, reject) => {
+export async function createOutboundConnection(token: string): Promise<[RTCPeerConnection, RTCDataChannel]> {
+    return new Promise(async (resolve, reject) => {
         console.log('creating outbound connection');
         const PC_CONFIG = {
             iceServers: [
@@ -15,13 +15,20 @@ export async function createOutboundConnection(token: string, stream?: MediaStre
             ],
         };
         const peer = new RTCPeerConnection(PC_CONFIG);
-
         console.log('store RTC function occurred');
-        console.log('Stream val:', stream);
 
-        if (stream !== undefined) {
+        try {
+            const stream = await mediaDevices.getUserMedia({ audio: true });
+            console.log('Stream Defined\nObtained MediaStream:', stream);
             peer.addTrack(stream.getAudioTracks()[0], stream);
+        } catch (error) {
+            console.error('Error obtaining media stream:', error);
         }
+
+        // if (stream !== undefined) {
+        //     console.log('Stream is not undefined');
+        //     peer.addTrack(stream.getAudioTracks()[0], stream);
+        // }
 
         const channel = peer.createDataChannel('datachannel', { ordered: true });
         channel.onopen = (ev: Event) => {
