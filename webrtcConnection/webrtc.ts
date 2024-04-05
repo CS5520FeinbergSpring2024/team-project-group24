@@ -1,9 +1,7 @@
-import { useRef } from 'react';
+
 import { sendOffer } from './requests';
 import {
     RTCPeerConnection,
-    MediaStreamTrack,
-    mediaDevices,
 } from 'react-native-webrtc';
 
 export async function createOutboundConnection(token: string, stream?: MediaStream): Promise<[RTCPeerConnection, RTCDataChannel]> {
@@ -26,11 +24,11 @@ export async function createOutboundConnection(token: string, stream?: MediaStre
         }
 
         const channel = peer.createDataChannel('datachannel', { ordered: true });
-        channel.onopen = () => {
-            console.log('data channel opened');
+        channel.onopen = (ev: Event) => {
+            console.log('data channel opened', ev);
         };
 
-        peer.createOffer().then((offer) => {
+        peer.createOffer({ offerToReceiveAudio: true }).then((offer) => {
             peer.setLocalDescription(offer);
         });
 

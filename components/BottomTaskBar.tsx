@@ -12,6 +12,7 @@ import {PermissionsAndroid} from 'react-native';
 import {sendOffer} from '../webrtcConnection/requests';
 import {useConnection} from '../webrtcConnection/store';
 import {createOutboundConnection} from '../webrtcConnection/webrtc';
+import {mediaDevices} from 'react-native-webrtc';
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -47,10 +48,22 @@ const BottomTaskBar = ({
       console.log('handleStart activated');
       if (backendAvailable) {
         console.log('backend is available');
-        const audioStream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        setStream(audioStream);
+
+        try {
+          if (navigator.mediaDevices) {
+            const audioStream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+            });
+            setStream(audioStream);
+
+            // Continue with your code...
+          } else {
+            console.log('navigator.mediaDevices is not available');
+          }
+        } catch (error) {
+          console.error('Error occurred while starting:', error);
+        }
+
         const [rtcPeerConnection, rtcDataChannel] =
           await createOutboundConnection(token);
         setWebrtc(rtcPeerConnection);
