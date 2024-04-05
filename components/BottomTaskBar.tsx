@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {PulseIndicator, BallIndicator} from 'react-native-indicators';
 import {PermissionsAndroid} from 'react-native';
 import {sendOffer} from '../webrtcConnection/requests';
@@ -44,53 +44,52 @@ const BottomTaskBar = ({
       // if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       //   console.error('getUserMedia is not supported in this environment');
       //   return;
-      // }
+      // // }
       console.log('handleStart activated');
       if (backendAvailable) {
         console.log('backend is available');
 
-        try {
-          if (navigator.mediaDevices) {
-            const audioStream = await navigator.mediaDevices.getUserMedia({
-              audio: true,
-            });
-            setStream(audioStream);
+        // try {
+        //   if (navigator.mediaDevices) {
+        //     const audioStream = await navigator.mediaDevices.getUserMedia({
+        //       audio: true,
+        //     });
+        //     setStream(audioStream);
 
-            // Continue with your code...
-          } else {
-            console.log('navigator.mediaDevices is not available');
-          }
-        } catch (error) {
-          console.error('Error occurred while starting:', error);
-        }
+        //   } else {
+        //     console.log('navigator.mediaDevices is not available');
+        //   }
+        // } catch (error) {
+        //   console.error('Error occurred while starting:', error);
+        // }
 
-        const [rtcPeerConnection, rtcDataChannel] =
-          await createOutboundConnection(token);
-        setWebrtc(rtcPeerConnection);
-        setDataChannel(rtcDataChannel);
-        rtcDataChannel.onopen = () => {
-          rtcDataChannel.onmessage = event => {
-            console.log('We received a message: ', event.data);
-            const messageObject = JSON.parse(event.data);
-            const threshold = 0.5;
-            setAns(currentMessages => {
-              if (currentMessages.length > 0) {
-                const lastCurrentMessage =
-                  currentMessages[currentMessages.length - 1];
-                if (
-                  Math.abs(messageObject.start - lastCurrentMessage.start) <
-                  threshold
-                ) {
-                  return [...currentMessages.slice(0, -1), messageObject];
-                } else if (messageObject.start < lastCurrentMessage.start) {
-                  return currentMessages;
-                }
-              }
-              return [...currentMessages, messageObject];
-            });
-          };
-        };
-        updateState({webrtc: true});
+        // const [rtcPeerConnection, rtcDataChannel] =
+        //   await createOutboundConnection(token);
+        // setWebrtc(rtcPeerConnection);
+        // setDataChannel(rtcDataChannel);
+        // rtcDataChannel.onopen = () => {
+        //   rtcDataChannel.onmessage = event => {
+        //     console.log('We received a message: ', event.data);
+        //     const messageObject = JSON.parse(event.data);
+        //     const threshold = 0.5;
+        //     setAns(currentMessages => {
+        //       if (currentMessages.length > 0) {
+        //         const lastCurrentMessage =
+        //           currentMessages[currentMessages.length - 1];
+        //         if (
+        //           Math.abs(messageObject.start - lastCurrentMessage.start) <
+        //           threshold
+        //         ) {
+        //           return [...currentMessages.slice(0, -1), messageObject];
+        //         } else if (messageObject.start < lastCurrentMessage.start) {
+        //           return currentMessages;
+        //         }
+        //       }
+        //       return [...currentMessages, messageObject];
+        //     });
+        //   };
+        // };
+        // updateState({webrtc: true});
         updateElapsedTime();
         setRecordingStartTime(new Date());
         console.log('elapsed time: ', elapsedTime);
@@ -125,9 +124,21 @@ const BottomTaskBar = ({
           .toString()
           .padStart(2, '0')}`,
       );
-      setTimeout(updateElapsedTime, 1000);
+      timerRef.current = setTimeout(updateElapsedTime, 1000);
     }
   }
+
+  // Add a ref to store the timer ID
+  const timerRef = useRef<any>(null);
+
+  // Start the elapsed time update when component mounts
+  useEffect(() => {
+    timerRef.current = setTimeout(updateElapsedTime, 1000);
+
+    // Cleanup function to clear the timeout when component unmounts
+    return () => clearTimeout(timerRef.current);
+  }, [recordingStartTime]);
+
   // --------------------------------------------------------------------------
 
   // Handle permissions
@@ -145,10 +156,10 @@ const BottomTaskBar = ({
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('Microphone permission granted');
-        setRecordActive(true);
-        console.log('Microphone active', recordActive);
+        console.log('Microphone active', !recordActive);
         // Perform recording here
         handleStart();
+        setRecordActive(true);
       } else {
         console.log('Microphone permission denied');
       }
@@ -160,6 +171,7 @@ const BottomTaskBar = ({
   const handleFinishPress = async () => {
     setRecordActive(false);
     handleStop();
+    clearTimeout(timerRef.current);
   };
 
   return (
