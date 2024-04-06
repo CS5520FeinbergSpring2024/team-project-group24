@@ -1,5 +1,12 @@
-import React, {Component, RefObject} from 'react';
-import {TextInput, StyleSheet, View, Dimensions, Keyboard} from 'react-native';
+import React, {Component, RefObject, useState} from 'react';
+import {
+  Text,
+  TextInput,
+  StyleSheet,
+  View,
+  Dimensions,
+  Keyboard,
+} from 'react-native';
 import BottomTaskBar from '../components/BottomTaskBar';
 import DropDown from '../components/DropDown';
 
@@ -9,6 +16,7 @@ interface ComposeNewScreenState {
   textValue: string;
   isDropDownActive: boolean;
   recordActive: boolean;
+  results: any[];
 }
 
 export default class ComposeNewScreen extends Component<
@@ -23,6 +31,7 @@ export default class ComposeNewScreen extends Component<
       textValue: '', // State to hold the value of the text input
       isDropDownActive: true,
       recordActive: false,
+      results: [],
     };
     this.textInputRef = React.createRef<TextInput>();
   }
@@ -58,31 +67,9 @@ export default class ComposeNewScreen extends Component<
       );
     }
   };
-
-  // componentDidMount() {
-  //   console.log(this.state.recordActive);
-  //   // Focus on TextInput when recordActive is true
-  //   if (this.state.recordActive && this.textInputRef.current) {
-  //     console.log('componentDidMount got called');
-  //     // On Android, focus without showing the keyboard
-  //     this.textInputRef.current.blur();
-  //   }
-  // }
-
-  // componentDidUpdate(prevProps: {}, prevState: ComposeNewScreenState) {
-  //   // Check if recordActive has changed from false to true
-  //   if (
-  //     !prevState.recordActive &&
-  //     this.state.recordActive &&
-  //     this.textInputRef.current
-  //   ) {
-  //     // On Android, focus without showing the keyboard
-  //     this.textInputRef.current.blur();
-  //   }
-  // }
-
   render() {
     const {isDropDownActive, recordActive} = this.state;
+    const {results, setResults} = this.state;
     return (
       <View style={styles.mainContainer}>
         <View
@@ -95,12 +82,27 @@ export default class ComposeNewScreen extends Component<
         {/* <DropDownSelection header={'How do you feel:'} /> */}
         <View style={styles.textBoxWrapper}>
           {/* I will ned to add multiline={true} then have the finish button exit out of keyboard*/}
+          {/* {recordActive && (
+            <View style={styles.textBoxContainer}>
+              {results?.map((result, index) => (
+                <Text key={index}>{result}</Text>
+              ))}
+            </View>
+          )} */}
           <TextInput
             ref={this.textInputRef}
             style={styles.textBoxContainer}
             placeholder="Enter your message here"
-            onChangeText={text => this.setState({textValue: text})}
-            value={this.state.textValue}
+            value={results || this.state.textValue}
+            onChangeText={text => {
+              if (recordActive) {
+                // If recordActive is true, update the results state instead of textValue
+                setResults([text]);
+              } else {
+                // If recordActive is false, update the textValue state
+                this.setState({textValue: text});
+              }
+            }}
             textAlignVertical="top"
             multiline={true}
             onFocus={this.handleTextInputFocus}
@@ -110,6 +112,10 @@ export default class ComposeNewScreen extends Component<
         <BottomTaskBar
           recordActive={recordActive}
           setRecordActive={this.handleSetRecordActive}
+          results={results}
+          setResults={(newResults: any[]) =>
+            this.setState({results: newResults})
+          }
         />
       </View>
     );

@@ -11,6 +11,7 @@ export async function createOutboundConnection(token: string): Promise<[RTCPeerC
             iceServers: [
                 {
                     urls: 'stun:stun.l.google.com:19302',
+                    username: 'cd3a6694-4839-47a0-9bf3-1722c4fc2071',
                 },
             ],
         };
@@ -18,40 +19,61 @@ export async function createOutboundConnection(token: string): Promise<[RTCPeerC
         console.log('store RTC function occurred');
 
         try {
-            const stream = await mediaDevices.getUserMedia({ audio: true });
+            let stream = await mediaDevices.getUserMedia({ audio: true });
             console.log('Stream Defined\nObtained MediaStream:', stream);
             peer.addTrack(stream.getAudioTracks()[0], stream);
+
+            // resolve([peer, channel]);
         } catch (error) {
             console.error('Error obtaining media stream:', error);
         }
 
-        // if (stream !== undefined) {
-        //     console.log('Stream is not undefined');
-        //     peer.addTrack(stream.getAudioTracks()[0], stream);
-        // }
-
-        const channel = peer.createDataChannel('datachannel', { ordered: true });
-        channel.onopen = (ev: Event) => {
-            console.log('data channel opened', ev);
-        };
+        let channel: RTCDataChannel;
+        try {
+            channel = peer.createDataChannel('datachannel', { ordered: true });
+            console.log('Data channel created', channel);
+            // Set up event handlers for data channel
+            channel.onopen = (ev: any) => {
+                console.log('Data channel opened', ev);
+            };
+            channel.onmessage = (ev: any) => {
+                console.log('Received message:', ev.data);
+            };
+            channel.onclose = (ev: any) => {
+                console.log('Data channel closed', ev);
+            };
+            channel.onerror = (ev: any) => {
+                console.error('Data channel error:', ev.error);
+            };
+        } catch (error) {
+            console.error('Error creating data channel:', error);
+        }
 
         peer.createOffer({ offerToReceiveAudio: true }).then((offer) => {
             peer.setLocalDescription(offer);
         });
 
-        peer.onconnectionstatechange = () => {
-            console.log('connection state changed to ' + peer.connectionState);
-        };
+        console.log('connection: ', peer.connectionState);
 
-        peer.onicecandidate = async (event) => {
+        function logConnectionState() {
+            console.log('Connection state: ' + peer.connectionState);
+        }
+        const intervalId = setInterval(logConnectionState, 10000);
+
+        (peer as any).onicecandidate = async () => {
             if (peer.iceGatheringState === 'complete') {
                 let sdp = peer.localDescription;
                 if (sdp !== null) {
-                    let answer = await sendOffer(token, sdp.sdp, sdp.type);
+                    console.log('spd not null');
+                    const type = sdp.type ?? '';
+                    let answer = await sendOffer(token, sdp.sdp, type);
                     await peer.setRemoteDescription(answer);
                     resolve([peer, channel]);
+                    console.log('answer: ', answer);
+                    clearInterval(intervalId);
                 }
             }
         };
     });
 }
+

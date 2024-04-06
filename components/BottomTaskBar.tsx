@@ -13,6 +13,8 @@ import {sendOffer} from '../webrtcConnection/requests';
 import {useConnection} from '../webrtcConnection/store';
 import {createOutboundConnection} from '../webrtcConnection/webrtc';
 import {mediaDevices} from 'react-native-webrtc';
+import WebRTC from '../webrtcConnection/webrtcConnect';
+import Voice from '@react-native-voice/voice';
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -21,9 +23,13 @@ const screenHeight = Dimensions.get('window').height;
 const BottomTaskBar = ({
   recordActive,
   setRecordActive,
+  results,
+  setResults,
 }: {
   recordActive: boolean;
   setRecordActive: React.Dispatch<React.SetStateAction<boolean>>;
+  results: any[];
+  setResults: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
   // The backend was established by a coworker, but utilized svelte. This conversion back to
   // react native and integration was done by myself
@@ -39,106 +45,140 @@ const BottomTaskBar = ({
   const {connection, updateState} = useConnection();
   const {backendAvailable, token} = connection;
 
-  const handleStart = async () => {
-    try {
-      // if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      //   console.error('getUserMedia is not supported in this environment');
-      //   return;
-      // // }
-      console.log('handleStart activated');
-      if (backendAvailable) {
-        console.log('backend is available');
+  let [started, setStarted] = useState(false);
 
-        try {
-          if (navigator.mediaDevices) {
-            const audioStream = await navigator.mediaDevices.getUserMedia({
-              audio: true,
-            });
-            setStream(audioStream);
-          } else {
-            console.log('navigator.mediaDevices is not available');
-          }
-        } catch (error) {
-          console.error('Error occurred while starting:', error);
-        }
+  // Functions used to implement react-native-voice
+  useEffect(() => {
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechResults = onSpeechResults;
 
-        const [rtcPeerConnection, rtcDataChannel] =
-          await createOutboundConnection(token);
-        setWebrtc(rtcPeerConnection);
-        setDataChannel(rtcDataChannel);
-        rtcDataChannel.onopen = () => {
-          rtcDataChannel.onmessage = event => {
-            console.log('We received a message: ', event.data);
-            const messageObject = JSON.parse(event.data);
-            const threshold = 0.5;
-            setAns(currentMessages => {
-              if (currentMessages.length > 0) {
-                const lastCurrentMessage =
-                  currentMessages[currentMessages.length - 1];
-                if (
-                  Math.abs(messageObject.start - lastCurrentMessage.start) <
-                  threshold
-                ) {
-                  return [...currentMessages.slice(0, -1), messageObject];
-                } else if (messageObject.start < lastCurrentMessage.start) {
-                  return currentMessages;
-                }
-              }
-              return [...currentMessages, messageObject];
-            });
-          };
-        };
-        updateState({webrtc: true});
-        updateElapsedTime();
-        setRecordingStartTime(new Date());
-        console.log('elapsed time: ', elapsedTime);
-      }
-    } catch (error) {
-      console.error('Error occurred while starting:', error);
-    }
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const startSpeechToText = async () => {
+    await Voice.start('en-NZ');
+    setStarted(true);
   };
 
-  function handleStop() {
-    if (webrtc) {
-      webrtc.close();
-    }
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-    }
-    setAns([]);
-    setRecordingStartTime(null);
-    setElapsedTime('00:00');
-  }
+  const stopSpeechToText = async () => {
+    await Voice.stop();
+    setStarted(false);
+  };
 
-  function updateElapsedTime() {
-    console.log('recordingStartTime: ', recordingStartTime);
-    if (recordingStartTime) {
-      console.log('recordingStartTime = true');
-      const now = new Date();
-      const diff = now.getTime() - recordingStartTime.getTime();
-      const seconds = Math.floor(diff / 1000) % 60;
-      const minutes = Math.floor(diff / 60000);
-      setElapsedTime(
-        `${minutes.toString().padStart(2, '0')}:${seconds
-          .toString()
-          .padStart(2, '0')}`,
-      );
-      timerRef.current = setTimeout(updateElapsedTime, 1000);
-    }
-  }
+  const onSpeechResults = (result: any) => {
+    setResults(result.value[0]);
+    console.log('Results:\n', result.value[0]);
+  };
 
-  // Add a ref to store the timer ID
-  const timerRef = useRef<any>(null);
+  const onSpeechError = (error: any) => {
+    console.log(error);
+  };
+  // ------------end of react-native-voice-------------------
 
-  // Start the elapsed time update when component mounts
-  useEffect(() => {
-    timerRef.current = setTimeout(updateElapsedTime, 1000);
+  // ------------ Attempt to implement WebRTC connection --------------
+  // This will be addressed in future updates.
+  // const handleStart = async () => {
+  //   try {
+  //     // if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+  //     //   console.error('getUserMedia is not supported in this environment');
+  //     //   return;
+  //     // // }
+  //     console.log('handleStart activated');
+  //     if (backendAvailable) {
+  //       console.log('backend is available');
 
-    // Cleanup function to clear the timeout when component unmounts
-    return () => clearTimeout(timerRef.current);
-  }, [recordingStartTime]);
+  //       try {
+  //         if (navigator.mediaDevices) {
+  //           const audioStream = await navigator.mediaDevices.getUserMedia({
+  //             audio: true,
+  //           });
+  //           setStream(audioStream);
+  //         } else {
+  //           console.log('navigator.mediaDevices is not available');
+  //         }
+  //       } catch (error) {
+  //         console.error('Error occurred while starting:', error);
+  //       }
 
-  // --------------------------------------------------------------------------
+  //       const [rtcPeerConnection, rtcDataChannel] =
+  //         await createOutboundConnection(token);
+  //       setWebrtc(rtcPeerConnection);
+  //       setDataChannel(rtcDataChannel);
+  //       rtcDataChannel.onopen = () => {
+  //         rtcDataChannel.onmessage = event => {
+  //           console.log('We received a message: ', event.data);
+  //           const messageObject = JSON.parse(event.data);
+  //           const threshold = 0.5;
+  //           setAns(currentMessages => {
+  //             if (currentMessages.length > 0) {
+  //               const lastCurrentMessage =
+  //                 currentMessages[currentMessages.length - 1];
+  //               if (
+  //                 Math.abs(messageObject.start - lastCurrentMessage.start) <
+  //                 threshold
+  //               ) {
+  //                 return [...currentMessages.slice(0, -1), messageObject];
+  //               } else if (messageObject.start < lastCurrentMessage.start) {
+  //                 return currentMessages;
+  //               }
+  //             }
+  //             return [...currentMessages, messageObject];
+  //           });
+  //         };
+  //       };
+  //       updateState({webrtc: true});
+  //       updateElapsedTime();
+  //       setRecordingStartTime(new Date());
+  //       console.log('elapsed time: ', elapsedTime);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error occurred while starting:', error);
+  //   }
+  // };
+
+  // function handleStop() {
+  //   if (webrtc) {
+  //     webrtc.close();
+  //   }
+  //   if (stream) {
+  //     stream.getTracks().forEach(track => track.stop());
+  //   }
+  //   setAns([]);
+  //   setRecordingStartTime(null);
+  //   setElapsedTime('00:00');
+  // }
+
+  // function updateElapsedTime() {
+  //   console.log('recordingStartTime: ', recordingStartTime);
+  //   if (recordingStartTime) {
+  //     console.log('recordingStartTime = true');
+  //     const now = new Date();
+  //     const diff = now.getTime() - recordingStartTime.getTime();
+  //     const seconds = Math.floor(diff / 1000) % 60;
+  //     const minutes = Math.floor(diff / 60000);
+  //     setElapsedTime(
+  //       `${minutes.toString().padStart(2, '0')}:${seconds
+  //         .toString()
+  //         .padStart(2, '0')}`,
+  //     );
+  //     timerRef.current = setTimeout(updateElapsedTime, 1000);
+  //   }
+  // }
+
+  // // Add a ref to store the timer ID
+  // const timerRef = useRef<any>(null);
+
+  // // Start the elapsed time update when component mounts
+  // useEffect(() => {
+  //   timerRef.current = setTimeout(updateElapsedTime, 1000);
+
+  //   // Cleanup function to clear the timeout when component unmounts
+  //   return () => clearTimeout(timerRef.current);
+  // }, [recordingStartTime]);
+
+  // -------------------------End of WebRTC connection ------------------------------
 
   // Handle permissions
   const handleRecordPress = async () => {
@@ -157,7 +197,8 @@ const BottomTaskBar = ({
         console.log('Microphone permission granted');
         console.log('Microphone active', !recordActive);
         // Perform recording here
-        handleStart();
+        // handleStart();
+        startSpeechToText();
         setRecordActive(true);
       } else {
         console.log('Microphone permission denied');
@@ -169,13 +210,15 @@ const BottomTaskBar = ({
 
   const handleFinishPress = async () => {
     setRecordActive(false);
-    handleStop();
-    clearTimeout(timerRef.current);
+    // handleStop();
+    stopSpeechToText();
+    // clearTimeout(timerRef.current);
   };
 
   return (
     <View style={[styles.mainContainer, styles.screenBottom]}>
-      <Text> {elapsedTime}</Text>
+      {/* Future development will have a timer */}
+      {/* <Text> {elapsedTime}</Text>  */}
       <TouchableOpacity
         style={styles.buttonContainer}
         onPress={handleRecordPress}>
