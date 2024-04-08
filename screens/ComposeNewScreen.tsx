@@ -1,12 +1,5 @@
-import React, {Component, RefObject, useState} from 'react';
-import {
-  Text,
-  TextInput,
-  StyleSheet,
-  View,
-  Dimensions,
-  Keyboard,
-} from 'react-native';
+import React, {Component, RefObject} from 'react';
+import {TextInput, StyleSheet, View, Dimensions, Keyboard} from 'react-native';
 import BottomTaskBar from '../components/BottomTaskBar';
 import DropDown from '../components/DropDown';
 
@@ -28,13 +21,19 @@ export default class ComposeNewScreen extends Component<
   constructor(props: {}) {
     super(props);
     this.state = {
-      textValue: '', // State to hold the value of the text input
+      textValue: '',
       isDropDownActive: true,
       recordActive: false,
       results: [],
     };
     this.textInputRef = React.createRef<TextInput>();
   }
+
+  handleClearButtonPress = () => {
+    this.setState({textValue: ''});
+    this.setState({results: []});
+    console.log('clear button pressed');
+  };
 
   handleTextInputFocus = () => {
     // Shrink the dropdown when TextInput is focused
@@ -79,25 +78,18 @@ export default class ComposeNewScreen extends Component<
           ]}>
           <DropDown />
         </View>
-        {/* <DropDownSelection header={'How do you feel:'} /> */}
         <View style={styles.textBoxWrapper}>
-          {/* I will ned to add multiline={true} then have the finish button exit out of keyboard*/}
-          {/* {recordActive && (
-            <View style={styles.textBoxContainer}>
-              {results?.map((result, index) => (
-                <Text key={index}>{result}</Text>
-              ))}
-            </View>
-          )} */}
           <TextInput
             ref={this.textInputRef}
             style={styles.textBoxContainer}
             placeholder="Enter your message here"
-            value={results || this.state.textValue}
+            defaultValue={
+              results.length > 0 ? results[0] : this.state.textValue
+            }
             onChangeText={text => {
               if (recordActive) {
                 // If recordActive is true, update the results state instead of textValue
-                setResults([text]);
+                this.setState({textValue: text});
               } else {
                 // If recordActive is false, update the textValue state
                 this.setState({textValue: text});
@@ -116,6 +108,7 @@ export default class ComposeNewScreen extends Component<
           setResults={(newResults: any[]) =>
             this.setState({results: newResults})
           }
+          handleClearButtonPress={this.handleClearButtonPress}
         />
       </View>
     );

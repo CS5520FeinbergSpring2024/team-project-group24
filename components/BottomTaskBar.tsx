@@ -6,8 +6,8 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
-import {PulseIndicator, BallIndicator} from 'react-native-indicators';
+import React, {useState, useEffect} from 'react';
+import {PulseIndicator} from 'react-native-indicators';
 import {PermissionsAndroid} from 'react-native';
 import {sendOffer} from '../webrtcConnection/requests';
 import {useConnection} from '../webrtcConnection/store';
@@ -18,32 +18,36 @@ import Voice from '@react-native-voice/voice';
 
 const screenHeight = Dimensions.get('window').height;
 
-// const screenWidth = Dimensions.get('window').width;
-
 const BottomTaskBar = ({
   recordActive,
   setRecordActive,
   results,
   setResults,
+  handleClearButtonPress,
 }: {
   recordActive: boolean;
   setRecordActive: React.Dispatch<React.SetStateAction<boolean>>;
   results: any[];
   setResults: React.Dispatch<React.SetStateAction<any[]>>;
+  handleClearButtonPress: () => void;
 }) => {
   // The backend was established by a coworker, but utilized svelte. This conversion back to
   // react native and integration was done by myself
   // Establish webrtc states
-  const [ans, setAns] = useState<any[]>([]);
-  const [webrtc, setWebrtc] = useState<RTCPeerConnection | null>(null);
-  const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [recordingStartTime, setRecordingStartTime] = useState<Date | null>(
-    null,
-  );
-  const [elapsedTime, setElapsedTime] = useState('00:00');
-  const {connection, updateState} = useConnection();
-  const {backendAvailable, token} = connection;
+  // const [ans, setAns] = useState<any[]>([]);
+  // const [webrtc, setWebrtc] = useState<RTCPeerConnection | null>(null);
+  // const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
+  // const [stream, setStream] = useState<MediaStream | null>(null);
+  // const [recordingStartTime, setRecordingStartTime] = useState<Date | null>(
+  //   null,
+  // );
+  // const [elapsedTime, setElapsedTime] = useState('00:00');
+  // const {connection, updateState} = useConnection();
+  // const {backendAvailable, token} = connection;
+
+  const clearButtonPress = () => {
+    handleClearButtonPress();
+  };
 
   let [started, setStarted] = useState(false);
 
@@ -68,8 +72,8 @@ const BottomTaskBar = ({
   };
 
   const onSpeechResults = (result: any) => {
-    setResults(result.value[0]);
-    console.log('Results:\n', result.value[0]);
+    setResults(result.value);
+    console.log('Results:\n', result.value);
   };
 
   const onSpeechError = (error: any) => {
@@ -280,7 +284,9 @@ const BottomTaskBar = ({
           <Text style={styles.buttonText}>Restore</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonContainer}>
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={clearButtonPress}>
         <View style={styles.buttonContent}>
           <Image style={styles.image} source={require('../assets/trash.png')} />
           <Text style={styles.buttonText}>Clear</Text>
