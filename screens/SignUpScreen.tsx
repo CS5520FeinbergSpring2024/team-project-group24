@@ -7,10 +7,12 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
+// import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -28,11 +30,54 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
+  const [fullName, setFullName] = useState('');
+  const [isValidFullName, setIsValidFullName] = useState(true);
+
+  const [email, setEmail] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
+  const handleFullNameChange = (text: string) => {
+    const regex = /^[A-Za-z\s\-]+$/;
+
+    if (regex.test(text) || text === '') {
+      setFullName(text);
+      setIsValidFullName(true); // Set full name as valid
+    } else {
+      setIsValidFullName(false); // Set full name as invalid
+      showToast(); // Display toast for invalid full name
+    }
+  };
+
+  const handleEmailChange = (text: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (regex.test(text) || text === '') {
+      setEmail(text);
+      setIsValidEmail(true); // Set email as valid
+    } else {
+      setIsValidEmail(false); // Set email as invalid
+    }
+  };
+
+  const showToast = () => {
+    ToastAndroid.show('Invalid Sign Up information!', ToastAndroid.SHORT);
+  };
+
   const handleCountrySelect = (country: Country) => {
     setSelectedCountry(country);
   };
   const goToWelcome = () => {
     navigation.navigate('Welcome');
+  };
+
+  const handleSubmit = () => {
+    if (!isValidEmail || !isValidFullName) {
+      showToast();
+    } else {
+      // Submit logic if email is valid
+      goToWelcome();
+      console.log('Email:', email);
+    }
   };
 
   return (
@@ -43,9 +88,11 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
         <Text style={styles.descriptionText}>Full Name</Text>
         <View style={styles.infoContainer}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, !isValidFullName && styles.invalidInput]}
             placeholder="Enter your name"
             placeholderTextColor="#63625E"
+            onChangeText={handleFullNameChange}
+            value={fullName}
           />
           <Image
             source={require('../assets/mic-outline.png')}
@@ -63,6 +110,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
             style={styles.input}
             placeholder="Enter your email"
             placeholderTextColor="#63625E"
+            onChangeText={handleEmailChange}
           />
           <Image
             source={require('../assets/mic-outline.png')}
@@ -96,6 +144,8 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
               style={styles.input}
               placeholder="(000) 000 000"
               placeholderTextColor="#63625E"
+              keyboardType="numeric"
+              maxLength={10}
             />
           </View>
         </View>
@@ -113,7 +163,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           />
         </View>
       </View>
-      <TouchableOpacity style={styles.buttonContainer} onPress={goToWelcome}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
     </View>
@@ -203,6 +253,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
     fontSize: 18,
+  },
+  invalidInput: {
+    borderColor: 'red', // Change border color for invalid input
   },
 });
 
