@@ -21,15 +21,18 @@ const screenHeight = Dimensions.get('window').height;
 const BottomTaskBar = ({
   recordActive,
   setRecordActive,
-  results,
   setResults,
   handleClearButtonPress,
+  onFinishButtonPress,
+  onTypeButtonPress,
 }: {
   recordActive: boolean;
   setRecordActive: React.Dispatch<React.SetStateAction<boolean>>;
   results: any[];
   setResults: React.Dispatch<React.SetStateAction<any[]>>;
-  handleClearButtonPress: () => void;
+  handleClearButtonPress: () => void; // This is how I pass my methods to write in ComposeNewScreen
+  onFinishButtonPress: () => void;
+  onTypeButtonPress: () => void;
 }) => {
   // The backend was established by a coworker, but utilized svelte. This conversion back to
   // react native and integration was done by myself
@@ -214,9 +217,10 @@ const BottomTaskBar = ({
 
   const handleFinishPress = async () => {
     setRecordActive(false);
-    // handleStop();
     stopSpeechToText();
+    onFinishButtonPress(); // I want to write the logic in ComposeNewScreen to dismiss keyboard easier when finish is pressed.
     // clearTimeout(timerRef.current);
+    // handleStop();
   };
 
   return (
@@ -240,7 +244,9 @@ const BottomTaskBar = ({
           <Text style={styles.buttonText}>Cards</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonContainer}>
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={onTypeButtonPress}>
         <View style={styles.buttonContent}>
           <Image
             style={styles.image}

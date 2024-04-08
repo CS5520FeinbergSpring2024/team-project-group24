@@ -29,7 +29,20 @@ export default class ComposeNewScreen extends Component<
     this.textInputRef = React.createRef<TextInput>();
   }
 
+  onTypeButtonPress = () => {
+    if (this.textInputRef.current && this.textInputRef.current.focus) {
+      // Focus the text input and show the keyboard
+      this.textInputRef.current.focus();
+    }
+  };
+
+  onFinishButtonPress = () => {
+    // Drops keyboard when finish button is pressed
+    Keyboard.dismiss();
+  };
+
   handleClearButtonPress = () => {
+    // Clears textInput when clear is pressed
     this.setState({textValue: ''});
     this.setState({results: []});
     console.log('clear button pressed');
@@ -109,6 +122,8 @@ export default class ComposeNewScreen extends Component<
             this.setState({results: newResults})
           }
           handleClearButtonPress={this.handleClearButtonPress}
+          onFinishButtonPress={this.onFinishButtonPress}
+          onTypeButtonPress={this.onTypeButtonPress}
         />
       </View>
     );
