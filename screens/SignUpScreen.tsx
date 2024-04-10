@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -38,50 +38,29 @@ interface Props {
 }
 
 const SignUpScreen: React.FC<Props> = ({navigation}) => {
+  useEffect(() => {
+    // getData();
+    createTable();
+  }, []);
+
   const createTable = () => {
     db.transaction(tx => {
       tx.executeSql(
         'CREATE TABLE IF NOT EXISTS Users' +
-          '(ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, );',
+          '(ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, Email TEXT, Phone NUMBER);',
       );
     });
   };
+
   // useStates handle the selection of area code flag and number
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
   const [fullName, setFullName] = useState('');
-  const [isValidFullName, setIsValidFullName] = useState(true);
 
   const [email, setEmail] = useState('');
-  const [isValidEmail, setIsValidEmail] = useState(true);
 
-  const handleFullNameChange = (text: string) => {
-    const regex = /^[A-Za-z\s\-]+$/;
-
-    if (regex.test(text) || text === '') {
-      setFullName(text);
-      setIsValidFullName(true); // Set full name as valid
-    } else {
-      setIsValidFullName(false); // Set full name as invalid
-      showToast(); // Display toast for invalid full name
-    }
-  };
-
-  const handleEmailChange = (text: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (regex.test(text) || text === '') {
-      setEmail(text);
-      setIsValidEmail(true); // Set email as valid
-    } else {
-      setIsValidEmail(false); // Set email as invalid
-    }
-  };
-
-  const showToast = () => {
-    ToastAndroid.show('Invalid Sign Up information!', ToastAndroid.SHORT);
-  };
+  const [phone, setPhone] = useState('');
 
   const handleCountrySelect = (country: Country) => {
     setSelectedCountry(country);
@@ -90,13 +69,37 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
     navigation.navigate('Welcome');
   };
 
-  const handleSubmit = () => {
-    if (!isValidEmail || !isValidFullName) {
-      showToast();
+  const handleSubmit = async () => {
+    // Handles the submission for user sign up
+    // used Gemini to help fix issue of states not updating. Needed to add check logic in this method
+    const isValidName =
+      /^[A-Za-z\s-]+$/.test(fullName) &&
+      (fullName.match(/ /g) || []).length <= 1 &&
+      (fullName.match(/-/g) || []).length <= 2;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isValidPhone =
+      phone.length === 0 || (phone.length === 10 && /^\d+$/.test(phone));
+
+    if (isValidName && isValidEmail && isValidPhone) {
+      // If information is valid insert into SQLite db.
+      try {
+        await db.transaction(async tx => {
+          await tx.executeSql(
+            'INSERT INTO Users (Name, Email, Phone) VALUES (?,?,?)',
+            [fullName, email, phone],
+          );
+        });
+        console.log('Sign in successful!');
+        console.log('Full Name:', fullName);
+        console.log('Email:', email);
+        console.log('Phone: ', phone);
+        goToWelcome();
+      } catch (error) {
+        console.log(error);
+        ToastAndroid.show('User already exists', ToastAndroid.SHORT);
+      }
     } else {
-      // Submit logic if email is valid
-      goToWelcome();
-      console.log('Email:', email);
+      ToastAndroid.show('Invalid Sign Up Information', ToastAndroid.SHORT);
     }
   };
 
@@ -108,10 +111,12 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
         <Text style={styles.descriptionText}>Full Name</Text>
         <View style={styles.infoContainer}>
           <TextInput
-            style={[styles.input, !isValidFullName && styles.invalidInput]}
+            style={styles.input}
             placeholder="Enter your name"
             placeholderTextColor="#63625E"
-            onChangeText={handleFullNameChange}
+            onChangeText={text => {
+              setFullName(text);
+            }}
             value={fullName}
           />
           <Image
@@ -130,7 +135,9 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
             style={styles.input}
             placeholder="Enter your email"
             placeholderTextColor="#63625E"
-            onChangeText={handleEmailChange}
+            onChangeText={text => {
+              setEmail(text);
+            }}
           />
           <Image
             source={require('../assets/mic-outline.png')}
@@ -165,6 +172,9 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
               placeholder="(000) 000 000"
               placeholderTextColor="#63625E"
               keyboardType="numeric"
+              onChangeText={text => {
+                setPhone(text);
+              }}
               maxLength={10}
             />
           </View>
