@@ -96,6 +96,7 @@ export default class ComposeNewScreen extends Component<
             ref={this.textInputRef}
             style={styles.textBoxContainer}
             placeholder="Enter your message here"
+            placeholderTextColor={'#525252'}
             defaultValue={
               results.length > 0 ? results[0] : this.state.textValue
             }
@@ -151,6 +152,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'flex-start',
     backgroundColor: '#F7F7F7',
+    color: '#525252',
     borderRadius: 10,
     padding: 10,
     textAlignVertical: 'top',

@@ -1,6 +1,7 @@
 {
   "name": "ClassFinal",
   "displayName": "ClassFinal",
+  "orientation": "portrait",
   "plugins": [
     [
       "@react-native-voice-voice",

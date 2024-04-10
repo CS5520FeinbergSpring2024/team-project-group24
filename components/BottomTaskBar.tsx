@@ -58,7 +58,6 @@ const BottomTaskBar = ({
   useEffect(() => {
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechResults = onSpeechResults;
-
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -82,6 +81,7 @@ const BottomTaskBar = ({
   const onSpeechError = (error: any) => {
     console.log(error);
   };
+
   // ------------end of react-native-voice-------------------
 
   // ------------ Attempt to implement WebRTC connection --------------
@@ -202,11 +202,11 @@ const BottomTaskBar = ({
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('Microphone permission granted');
-        console.log('Microphone active', !recordActive);
         // Perform recording here
         // handleStart();
         startSpeechToText();
         setRecordActive(true);
+        console.log('Microphone active', recordActive);
       } else {
         console.log('Microphone permission denied');
       }
