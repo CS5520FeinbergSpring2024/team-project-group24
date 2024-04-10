@@ -33,12 +33,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.titleText}>Speak Ease</Text>
-        <Text style={styles.text}>
-          Lorem ipsum dolor sit amet consectetur. Integer blandit purus integer
-          venenatis condimentum ac magna interdum. Aliquet ut varius tellus et.
-          Id proin vitae tempus risus dis. Vitae ut phasellus facilisis neque
-          est quis neque enim.
-        </Text>
+        <Text style={styles.text}>Keeping communication natural and easy!</Text>
         <TouchableOpacity style={styles.buttonContainer} onPress={goToSignUp}>
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
@@ -84,7 +79,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     backgroundColor: '#000000',
     borderRadius: 40,
-    marginTop: screenHeight * 0.13,
+    marginTop: screenHeight * 0.27,
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: 'center',

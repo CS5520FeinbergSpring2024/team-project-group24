@@ -13,6 +13,18 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
 // import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
+import SQLite from 'react-native-sqlite-storage';
+
+const db = SQLite.openDatabase(
+  {
+    name: 'SpeakEaseDB',
+    location: 'default',
+  },
+  () => {},
+  error => {
+    console.log(error);
+  },
+);
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -26,6 +38,14 @@ interface Props {
 }
 
 const SignUpScreen: React.FC<Props> = ({navigation}) => {
+  const createTable = () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS Users' +
+          '(ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, );',
+      );
+    });
+  };
   // useStates handle the selection of area code flag and number
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
