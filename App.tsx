@@ -11,10 +11,12 @@ import HappyPrimeHeader from './components/HappyPrimeHeader';
 import HobbiesScreen from './screens/HobbiesScreen';
 import HowCanIAssistYouScreen from './screens/HowCanIAssistYouScreen';
 import ComposeNewScreen from './screens/ComposeNewScreen';
+import LoginScreen from './screens/LoginScreen';
 
 export type RootStackParamList = {
   Home: undefined;
   SignUp: undefined;
+  LoginScreen: undefined;
   Welcome: undefined;
   GenderScreen: undefined;
   HobbiesScreen: undefined;
@@ -40,7 +42,20 @@ export default function App() {
             component={HomeScreen}
             options={{headerTitle: headerComponent}}
           />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{
+              headerTitle: '',
+            }}
+          />
+          <Stack.Screen
+            name="LoginScreen"
+            component={LoginScreen}
+            options={{
+              headerTitle: '',
+            }}
+          />
         </Stack.Group>
         {/* Welcome and User Info Screens */}
         <Stack.Group>

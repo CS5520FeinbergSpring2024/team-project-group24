@@ -37,7 +37,28 @@ interface Props {
   navigation: HomeScreenNavigationProp;
 }
 
+// This is the logic so I can add a login button on the top right of the screen
+const LoginButton: React.FC<{navigation: HomeScreenNavigationProp}> = ({
+  navigation,
+}) => (
+  <TouchableOpacity
+    style={styles.loginButton}
+    onPress={() => navigation.navigate('LoginScreen')}>
+    <Text style={styles.loginButtonText}>Login</Text>
+  </TouchableOpacity>
+);
+
 const SignUpScreen: React.FC<Props> = ({navigation}) => {
+  // Assign navigation outside of useEffect, otherwise it will cause error
+  const loginButton = () => <LoginButton navigation={navigation} />;
+  // Assigns login button to the header of the screen
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: loginButton,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
   useEffect(() => {
     // getData();
     createTable();
@@ -286,6 +307,16 @@ const styles = StyleSheet.create({
   },
   invalidInput: {
     borderColor: 'red', // Change border color for invalid input
+  },
+  loginButton: {
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    marginRight: 20,
+    borderRadius: 5,
+  },
+  loginButtonText: {
+    color: '#000000',
+    fontSize: 20,
   },
 });
 
