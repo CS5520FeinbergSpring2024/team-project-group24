@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,22 @@ import {
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
+import SQLite from 'react-native-sqlite-storage';
 
 const screenHeight = Dimensions.get('window').height;
+
+const db = SQLite.openDatabase(
+  {
+    name: 'SpeakEaseDB',
+    location: 'default',
+  },
+  () => {
+    console.log('Database opened successfully');
+  },
+  error => {
+    console.log(error);
+  },
+);
 
 type HomeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -31,8 +45,38 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
   };
 
   const handleSubmit = async () => {
-    // Handles the submission for user sign up
-    // used Gemini to help fix issue of states not updating. Needed to add check logic in this method
+    // Create SQL query to select the User who's email matches
+    // an existing email in the DB
+    try {
+      const result = await new Promise((resolve, reject) => {
+        db.transaction(tx => {
+          tx.executeSql(
+            'SELECT * FROM Users WHERE Email = ?',
+            [email],
+            (_, {rows}) => {
+              resolve(rows);
+            },
+            (_, error) => {
+              reject(error);
+              return false;
+            },
+          );
+        });
+      });
+
+      if (result.length > 0) {
+        // Email found in database
+        console.log('Login successful');
+        goToWelcome(); // Navigate to the welcome screen
+      } else {
+        // Email not found in database
+        console.log('Email not found');
+        ToastAndroid.show('Invalid email or password', ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.error('Error querying database:', error);
+      ToastAndroid.show('Error querying database', ToastAndroid.SHORT);
+    }
   };
 
   return (
@@ -73,7 +117,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           />
         </View>
       </View>
-      <TouchableOpacity style={styles.buttonContainer} onPress={goToWelcome}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
     </View>

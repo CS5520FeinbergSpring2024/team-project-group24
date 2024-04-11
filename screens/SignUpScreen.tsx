@@ -15,12 +15,15 @@ import CountryPicker, {Country} from 'react-native-country-picker-modal';
 // import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
 import SQLite from 'react-native-sqlite-storage';
 
+//connect to db
 const db = SQLite.openDatabase(
   {
     name: 'SpeakEaseDB',
     location: 'default',
   },
-  () => {},
+  () => {
+    console.log('Database opened successfully');
+  },
   error => {
     console.log(error);
   },
