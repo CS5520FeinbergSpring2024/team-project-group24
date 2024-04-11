@@ -15,13 +15,14 @@ import SQLite from 'react-native-sqlite-storage';
 
 const screenHeight = Dimensions.get('window').height;
 
+// connect to local db
 const db = SQLite.openDatabase(
   {
     name: 'SpeakEaseDB',
     location: 'default',
   },
   () => {
-    console.log('Database opened successfully');
+    console.log('Database opened successfully in Login');
   },
   error => {
     console.log(error);
@@ -54,6 +55,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
             'SELECT * FROM Users WHERE Email = ?',
             [email],
             (_, {rows}) => {
+              // extract rows
               resolve(rows);
             },
             (_, error) => {

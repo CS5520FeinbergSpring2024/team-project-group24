@@ -22,7 +22,7 @@ const db = SQLite.openDatabase(
     location: 'default',
   },
   () => {
-    console.log('Database opened successfully');
+    console.log('Database opened successfully in SignUp');
   },
   error => {
     console.log(error);
