@@ -12,6 +12,14 @@ import HobbiesScreen from './screens/HobbiesScreen';
 import HowCanIAssistYouScreen from './screens/HowCanIAssistYouScreen';
 import ComposeNewScreen from './screens/ComposeNewScreen';
 import LoginScreen from './screens/LoginScreen';
+import {LogBox} from 'react-native';
+
+// This is to suppress the following warnings.
+// https://stackoverflow.com/questions/69538962/new-nativeeventemitter-was-called-with-a-non-null-argument-without-the-requir
+// `new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.
+//  WARN  `new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.
+LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
+LogBox.ignoreAllLogs();
 
 export type RootStackParamList = {
   Home: undefined;
